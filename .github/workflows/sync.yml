@@ -1,0 +1,45 @@
+name: Upstream Sync
+
+permissions:
+  contents: write
+
+on:
+  schedule:
+    - cron: "0 */2 * * *" # 每 2 小时自动检查并同步上游更新
+  workflow_dispatch:      # 支持在 Actions 页面手动点击触发
+
+jobs:
+  sync_from_upstream:
+    name: Sync latest commits from upstream repo
+    runs-on: ubuntu-latest
+    if: ${{ github.event.repository.fork }}
+
+    steps:
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Sync upstream changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git remote add upstream https://github.com/MakkaPakka518/ProxyHub_Emby.git
+          git fetch upstream main
+
+          # 检查上游项目文件（排除 .github 目录）是否有更新
+          if git diff --quiet HEAD upstream/main -- ':!.github'; then
+            echo "No upstream changes detected in project files. Already up to date."
+          else
+            echo "New upstream changes detected. Merging..."
+            if ! git merge --no-edit -m "chore: sync upstream changes from MakkaPakka518/ProxyHub_Emby" upstream/main; then
+              echo "[Warning] Merge conflict encountered. Resolving with upstream versions for project files..."
+              git checkout --theirs .
+              git checkout HEAD -- .github
+              git add -A
+              git commit -m "chore: auto-resolve sync conflicts in favor of upstream" || true
+            fi
+            git push origin main
+          fi
