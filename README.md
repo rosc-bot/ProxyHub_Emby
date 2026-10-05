@@ -85,7 +85,7 @@
 
 ### 5. 绑定域名
 
-Worker → **Settings** → **Domains & Routes** → **Add**，输入你的反代域名（需已接入 CF DNS）。去到Cloudflare 域名概览界面，选择你刚刚添加到worler的域名，点击DNS记录，添加一条CNAME记录，前缀填你刚刚自定义的前缀，关闭小黄云，目标填入：saas.sin.fan
+Worker → **Settings** → **Domains & Routes** → **Add**，在worker域界面，选择添加路由输入你的反代域名（需已接入 CF DNS）。去到Cloudflare 域名概览界面，选择你刚刚添加到worler的域名，点击DNS记录，添加一条CNAME记录，前缀填你刚刚自定义的前缀，关闭小黄云，目标填入：saas.sin.fan
 
 ### 6. 登录
 
