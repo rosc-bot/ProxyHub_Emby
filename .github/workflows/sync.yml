@@ -22,6 +22,7 @@ jobs:
           ref: main
 
       - name: Sync upstream changes
+        id: sync
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -29,17 +30,26 @@ jobs:
           git remote add upstream https://github.com/MakkaPakka518/ProxyHub_Emby.git
           git fetch upstream main
 
-          # 检查上游项目文件（排除 .github 和 wrangler.json）是否有更新
-          if git diff --quiet HEAD upstream/main -- ':!.github' ':!wrangler.json'; then
+          # 检查上游项目文件（排除 .github、wrangler.json、wrangler.toml）是否有更新
+          if git diff --quiet HEAD upstream/main -- ':!.github' ':!wrangler.json' ':!wrangler.toml'; then
             echo "No upstream changes detected in project files. Already up to date."
+            echo "has_updates=false" >> $GITHUB_OUTPUT
           else
             echo "New upstream changes detected. Merging..."
             if ! git merge --no-edit -m "chore: sync upstream changes from MakkaPakka518/ProxyHub_Emby" upstream/main; then
               echo "[Warning] Merge conflict encountered. Resolving with upstream versions for project files..."
               git checkout --theirs .
-              git checkout HEAD -- .github wrangler.json 2>/dev/null || true
+              git checkout HEAD -- .github wrangler.json wrangler.toml 2>/dev/null || true
               git add -A
               git commit -m "chore: auto-resolve sync conflicts in favor of upstream" || true
             fi
             git push origin main
+            echo "has_updates=true" >> $GITHUB_OUTPUT
           fi
+
+      - name: Deploy to Cloudflare Workers
+        if: steps.sync.outputs.has_updates == 'true' || github.event_name == 'workflow_dispatch'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

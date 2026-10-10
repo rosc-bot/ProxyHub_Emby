@@ -1,0 +1,15 @@
+name = "proxyhub-emby"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "makabaka"
+database_id = "92684154-f907-477e-bd17-61eb617acb33"
+
+[vars]
+ADMIN_TOKEN = "ranran666"
+CF_DOMAIN = "fd.985224.xyz"
+CF_ZONE_ID = "a1cf8faf6921b8d1fb4c231c776ac01b"
+CF_ACCOUNT_ID = "4e31e339b332f748126ae88726b412a0"
+CF_WORKER_NAME = "proxyhub-emby"
