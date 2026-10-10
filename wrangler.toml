@@ -13,3 +13,6 @@ CF_DOMAIN = "fd.985224.xyz"
 CF_ZONE_ID = "a1cf8faf6921b8d1fb4c231c776ac01b"
 CF_ACCOUNT_ID = "4e31e339b332f748126ae88726b412a0"
 CF_WORKER_NAME = "media-station"
+
+[triggers]
+crons = ["0 12 * * *"]
