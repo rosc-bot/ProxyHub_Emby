@@ -1,6 +1,55 @@
 {
   "versions": [
     {
+      "version": "3.4.15",
+      "date": "2026-10-17",
+      "title": "修复一键导入弹窗输入框溢出(手机端)",
+      "items": [
+        "手机端一键导入弹窗输入框超出边界:flex 子项默认 min-width:auto,输入框带较长 placeholder(如\"名称(默认备注)\")时内在最小宽度撑破容器",
+        "修复:4 个输入框统一改为 flex:1 1 0 + min-width:0,允许收缩,任意屏宽不再溢出"
+      ]
+    },
+    {
+      "version": "3.4.14",
+      "date": "2026-10-17",
+      "title": "修复一键导入按钮点击无效(函数名与浏览器原生 API 重名)",
+      "items": [
+        "根因:按钮 onclick 调用的 importNode 与浏览器原生 document.importNode() 同名,onclick 作用域链(元素→document→window)优先命中原生方法,传入字符串参数导致 TypeError,弹窗代码中断——按钮表现为点了没反应",
+        "修复:函数重命名为 openImportModal,onclick 同步更新,与所有原生 API 冲突解除(已全量扫描页面事件函数,importNode 为唯一冲突项)",
+        "一键导入弹窗维持 3 按钮(SenPlayer/Rex/Hills)直接跳转,账号密码自动填充节点配置"
+      ]
+    },
+    {
+      "version": "3.4.13",
+      "date": "2026-10-17",
+      "title": "一键导入弹窗重构:3 个播放器按钮直接跳转",
+      "items": [
+        "按反馈重构一键导入:弹窗改为 3 个大按钮(SenPlayer / Rex / Hills),点击即跳转到对应播放器的导入链接(如 rex://import?type=emby&scheme=...&host=...&port=...&username=...&password=...)",
+        "移除原「链接输入框+复制+打开」三行布局,凭据默认取节点账号(节点账号/节点密码),弹窗内可修改名称/账号/密码",
+        "链接生成逻辑保留原有三套格式(SenPlayer=importserver、Rex=import+title、Hills=import),前缀路径自动拼入 host/address"
+      ]
+    },
+    {
+      "version": "3.4.12",
+      "date": "2026-10-17",
+      "title": "修复:添加/编辑节点保存报 D1_ERROR 14 values for 13 columns",
+      "items": [
+        "修复:添加/编辑节点保存失败(D1_ERROR: 14 values for 13 columns)——保存接口 INSERT 语句列清单 13 列但 VALUES 误写 14 个占位符,已修正为 13 个,添加/编辑节点恢复正常",
+        "修复说明:该问题由 v3.4.11 新增 node_user/node_pass 列时 VALUES 占位符未同步精简导致"
+      ]
+    },
+    {
+      "version": "3.4.11",
+      "date": "2026-10-17",
+      "title": "新增 SenPlayer / Rex / Hills 一键导入",
+      "items": [
+        "节点卡片新增「一键导入」按钮，弹窗内一键生成三种播放器导入链接：SenPlayer(importserver)、Rex(import)、Hills(import)",
+        "节点支持保存账号/密码（编辑节点表单新增「节点账号/节点密码」字段），导入链接凭据默认取节点账号，弹窗内可修改",
+        "三种链接格式：senplayer://importserver?type=emby&name=名称&address=… ；rex://import?type=emby&scheme=…&host=…&port=…&title=名称 ；hills://import?type=emby&scheme=…&host=…&port=…",
+        "D1 增量新增 node_user / node_pass 列，已有节点数据不受影响"
+      ]
+    },
+    {
       "version": "3.4.10",
       "date": "2026-10-17",
       "title": "/entry 登录改用 ADMIN_TOKEN 优先",
